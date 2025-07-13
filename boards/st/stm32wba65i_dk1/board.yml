@@ -1,0 +1,6 @@
+board:
+  name: stm32wba65i_dk1
+  full_name: WBA65 Discovery Kit 1
+  vendor: st
+  socs:
+    - name: stm32wba65xx
