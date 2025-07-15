@@ -66,13 +66,13 @@ int main(void)
 
 	cfb_framebuffer_invert(dev);
 
-	cfb_set_kerning(dev, 3);
+	cfb_set_kerning(dev, 1);
 
 	while (1) {
 		for (int i = 0; i < MIN(x_res, y_res); i++) {
 			cfb_framebuffer_clear(dev, false);
 			if (cfb_print(dev,
-				      "0123456789mMgj!\"§$%&/()=",
+				      "0123456789abcdefghij!\"§$%&/()=",
 				      i, i)) {
 				printf("Failed to print a string\n");
 				continue;
