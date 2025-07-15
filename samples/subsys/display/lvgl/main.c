@@ -27,7 +27,7 @@ void main(void)
     lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);  // tengah layar
 
     // Set font kecil (pastikan tersedia)
-    lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
+    lv_obj_set_style_text_font(label, &pixel_operator, 0);
 
     // Tampilkan screen
     lv_disp_load_scr(screen);
