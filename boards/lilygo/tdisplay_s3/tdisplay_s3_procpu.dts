@@ -1,0 +1,164 @@
+/*
+ * Copyright 2025 Stefan Golinschi <stefan.golinschi@gmail.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include <espressif/esp32s3/esp32s3_wroom_n16r8.dtsi>
+#include "tdisplay_s3-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/mipi_dbi/mipi_dbi.h>
+#include <espressif/partitions_0x0_amp.dtsi>
+#include <zephyr/dt-bindings/led/led.h>
+
+/ {
+	model = "TDISPLAY S3 PROCPU";
+	compatible = "espressif,esp32s3";
+
+	aliases {
+		watchdog0 = &wdt0;
+		sdhc0 = &sdhc0;
+		uart-0 = &uart0;
+		sw0 = &button0;
+		led-strip = &apa102;
+	};
+
+	chosen {
+		zephyr,sram = &sram0;
+		/* console can be UART or USB CDC */
+		/* zephyr,console = &uart0; */
+		/* zephyr,shell-uart = &uart0; */
+		zephyr,console = &usb_serial;
+		zephyr,shell-uart = &usb_serial;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,bt-hci = &esp32_bt_hci;
+		zephyr,display = &st7789v_st7789v_tl019fqv01;
+		zephyr,sdhc = &sdhc0;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		status = "okay";
+
+		button0: button_0 {
+			gpios = <&gpio0 0 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "BOOT Button";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	mipi_dbi {
+		compatible = "zephyr,mipi-dbi-spi";
+		spi-dev = <&spi2>;
+		dc-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;	/* D9 */
+		reset-gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;	/* D8 */
+		write-only;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		
+
+		st7789v_st7789v_tl019fqv01: st7789v@0 {
+			compatible = "sitronix,st7789v";
+			mipi-max-frequency = <20000000>;
+			reg = <0>;
+			width = <320>;
+			height = <170>;
+			x-offset = <0>;
+			y-offset = <35>;
+			vcom = <0x2b>;
+			gctrl = <0x35>;
+			vrhs = <0x0f>;
+			vdvs = <0x20>;
+			mdac = <0x60>;
+			gamma = <0x01>;
+			colmod = <0x55>;
+			lcm = <0x2c>;
+			porch-param = [0c 0c 00 33 33];
+			cmd2en-param = [5a 69 02 01];
+			pwctrl1-param = [52 a1];
+			pvgam-param = [D0 00 02 07 0B 1A 31 54 40 29 12 12 12 17];
+			nvgam-param = [D0 00 02 07 05 15 2D 44 44 1C 18 16 1C 1D];
+			ram-param = [00 F8];
+			rgb-param = [CD 08 14];
+			mipi-mode = "MIPI_DBI_MODE_SPI_4WIRE";
+
+		};
+	};
+};
+
+&uart0 {
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-names = "default";
+	status = "okay";
+};
+
+&spi2 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	cs-gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spim2_default>;
+	pinctrl-names = "default";
+	clock-frequency = <20000000>;
+	status = "okay";
+};
+
+&spi3 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	pinctrl-0 = <&spim3_default>;
+	pinctrl-names = "default";
+	clock-frequency = <20000000>;
+	status = "okay";
+
+	apa102: apa102@0 {
+		compatible = "apa,apa102";
+		reg = <0>;
+		spi-max-frequency = <24000000>;
+		chain-length = <1>;
+		color-mapping = <LED_COLOR_ID_RED
+						 LED_COLOR_ID_BLUE
+						 LED_COLOR_ID_GREEN>;
+		status = "okay";
+	};
+};
+
+&usb_serial {
+	status = "okay";
+};
+
+&timer0 {
+	status = "okay";
+};
+
+&wdt0 {
+	status = "okay";
+};
+
+&trng0 {
+	status = "okay";
+};
+
+&esp32_bt_hci {
+	status = "okay";
+};
+
+&sdhc {
+	sdhc0: sdhc@0 {
+		pinctrl-0 = <&sdhc0_default>;
+		pinctrl-names = "default";
+		power-delay-ms = <100>;
+		max-bus-freq = <52000000>;
+		bus-width = <4>;
+		status = "okay";
+
+		mmc {
+			compatible = "zephyr,sdmmc-disk";
+			disk-name = "SD";
+			status = "okay";
+		};
+	};
+};

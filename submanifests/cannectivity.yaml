@@ -1,0 +1,6 @@
+manifest:
+  projects:
+    - name: cannectivity
+      url: https://github.com/frame1bit/cannectivity.git
+      revision: main
+      path: external/cannectivity # adjust the path as needed

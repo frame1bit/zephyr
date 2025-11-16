@@ -28,6 +28,7 @@
 		sw0 = &user_button1;
 		i2c-0 = &i2c0;
 		watchdog0 = &wdt0;
+		//led0 = &led0;
 	};
 
 	gpio_keys {
@@ -38,6 +39,14 @@
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
+
+	/*leds {
+		compatible = "gpio-leds";
+		led0: led0 {
+			gpios = <&gpio0 8 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "LED1";
+		};
+	};*/
 };
 
 &uart0 {
